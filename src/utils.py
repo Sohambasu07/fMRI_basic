@@ -21,8 +21,7 @@ class AverageMeter(object):
 
 
 def accuracy(logits, labels):
-    preds = torch.argmax(logits, dim=1)
-    return torch.sum(preds == labels) / len(labels)
+    return torch.sum(logits == labels) / len(labels)
 
 def disp_image(img, label):
     plt.figure()

@@ -4,6 +4,7 @@ import os
 import zipfile
 from PIL import Image
 import numpy as np
+import torch
 from torch.utils.data import Dataset, random_split
 
 class Dataset_Setup:
@@ -16,7 +17,7 @@ class Dataset_Setup:
 
     def download(self):
         if os.path.exists(os.path.join(self.root_dir, 'dataset.zip')):
-            print("Dataset already downloaded")
+            print("Dataset already downloaded!")
             return
         
         print("Downloading dataset...")
@@ -24,6 +25,9 @@ class Dataset_Setup:
         print("Download complete.")
     
     def extract(self):
+        if len(os.listdir(self.data_dir)) > 0:
+            print("Already extracted!")
+            return
         print("Extracting dataset...")
         os.makedirs(self.data_dir, exist_ok=True)
         with zipfile.ZipFile(os.path.join(self.root_dir, "dataset.zip"), "r") as zip_ref:
@@ -60,10 +64,12 @@ class AlzDataset(Dataset):
         img_name = self.paths[idx]
         image = Image.open(img_name)
         image = image.resize((64, 64), Image.ANTIALIAS)
-        image = np.asarray(image)
+        image = torch.permute(torch.Tensor(np.asarray(image)), (2, 0, 1))
         if self.transform:
             image = self.transform(image)
         label = 1 if "AD_Data" in self.paths else 0
+        label = torch.tensor(label, dtype=torch.float32)
+
 
         return image, label
     

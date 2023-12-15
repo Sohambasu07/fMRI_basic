@@ -70,7 +70,7 @@ def main(
     model.to(device)
 
     # Print model summary
-    summary(model, (channels, img_height, img_width), device=device)
+    summary(model, (channels, img_height, img_width), device=device.type)
 
     # instantiate optimizer
     optimizer = model_optimizer(model.parameters(), lr=learning_rate)
@@ -125,7 +125,7 @@ def main(
 
 if __name__ == '__main__':
 
-    loss_dict = {'cross_entropy': torch.nn.CrossEntropyLoss}
+    loss_dict = {'cross_entropy': torch.nn.BCELoss()}
 
     opti_dict = {
         'sgd': torch.optim.SGD, 

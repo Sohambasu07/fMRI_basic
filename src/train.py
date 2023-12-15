@@ -28,7 +28,7 @@ def train_fn(model, optimizer, criterion, loader, device):
         labels = labels.to(device)
 
         optimizer.zero_grad()
-        logits = model(images)
+        logits = model(images).squeeze()
         loss = criterion(logits, labels)
         loss.backward()
         optimizer.step()

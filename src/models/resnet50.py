@@ -11,7 +11,9 @@ class Resnet50(nn.Module):
             param.requires_grad = False
         
         self.PreTrained.fc = nn.Linear(2048, num_classes)
+        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         x = self.PreTrained(x)
+        x = self.sigmoid(x)
         return x
