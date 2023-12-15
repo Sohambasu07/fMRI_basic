@@ -2,6 +2,7 @@
 
 import torch
 from torch.utils.data import DataLoader, ConcatDataset
+from torch.optim import lr_scheduler
 from torchsummary import summary
 import logging
 import argparse
@@ -10,6 +11,7 @@ import os
 from src.data import Dataset_Setup, AlzDataset
 from src.models.resnet50 import Resnet50
 from src.train import train_fn
+from src.eval import eval_fn
 from src.utils import disp_image
 
 def main(
@@ -23,6 +25,7 @@ def main(
         model_optimizer=torch.optim.Adam,
         data_augmentations=None,
         save_model_str=None,
+        load_model=False,
         splits = [0.8, 0.1, 0.1],
         use_all_data_to_train=False,
         exp_name=''):
@@ -37,23 +40,15 @@ def main(
     Dataset_Setup(data_dir, url)
 
     # Create datasets
-    ad_datapath = os.path.join(data_dir, "AD_Data")
-    cn_datapath = os.path.join(data_dir, "CN_Data")
-
-    dataset_ad = AlzDataset(
-        ad_datapath, 
+    dataset = AlzDataset(
+        data_dir, 
         split={'train': True, 'val': True, 'test': True},
         split_ratio={'train': 0.8, 'val': 0.1, 'test': 0.1},
         transform=data_augmentations)
     
-    dataset_cn = AlzDataset(
-        cn_datapath, 
-        split={'train': True, 'val': True, 'test': True},
-        split_ratio={'train': 0.8, 'val': 0.1, 'test': 0.1},
-        transform=data_augmentations)
+    print(f"Total Dataset size: {len(dataset)}")
     
-    dataset = ConcatDataset([dataset_ad, dataset_cn])
-
+    # Split dataset
     train_dataset, val_dataset, test_dataset = dataset.split_dataset()
 
     # Create dataloaders
@@ -61,10 +56,71 @@ def main(
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
-    print(f"Train size: {len(train_dataset)}")
-    print(f"Image shape: {train_dataset[0][0].shape}")
+    channels, img_height, img_width = train_dataset[0][0].shape
 
-    disp_image(train_dataset[0][0], train_dataset[0][1])
+    print(f"Train size: {len(train_dataset)}")
+    print(f"Val size: {len(val_dataset)}")
+    print(f"Test size: {len(test_dataset)}")
+    print(f"Image shape: ({channels} x {img_height} x {img_width})")
+
+    # Model setup
+    model = torch_model()
+    if load_model:
+        model.load_state_dict(torch.load(save_model_str))
+    model.to(device)
+
+    # Print model summary
+    summary(model, (channels, img_height, img_width), device=device)
+
+    # instantiate optimizer
+    optimizer = model_optimizer(model.parameters(), lr=learning_rate)
+
+    # LR scheduler
+    scheduler = lr_scheduler.StepLR(optimizer, step_size=15, gamma=0.33)
+
+    # Train model
+
+    logging.info("Training model...")
+    best_val_acc = 0
+
+    for epoch in range(num_epochs):
+
+        logging.info('#' * 50)
+        logging.info('Epoch [{}/{}]'.format(epoch + 1, num_epochs))
+
+        train_acc, train_loss = train_fn(
+            model, 
+            optimizer, 
+            train_criterion, 
+            train_loader, 
+            device)
+        logging.info('Training accuracy: %f', train_acc)
+        logging.info('Training loss: %f', train_loss)
+        scheduler.step()
+
+        val_acc, val_loss = eval_fn(
+            model, 
+            train_criterion, 
+            val_loader, 
+            device)
+        logging.info('Validation accuracy: %f', val_acc)
+        logging.info('Validation loss: %f', val_loss)
+
+        if val_acc > best_val_acc:
+            best_val_acc = val_acc
+            if save_model_str:
+            # Save the model checkpoint can be restored via "model = torch.load(save_model_str)"
+                model_save_dir = os.path.join(os.getcwd(), save_model_str)
+
+                if not os.path.exists(model_save_dir):
+                    os.mkdir(model_save_dir)
+
+                # save_model_str = os.path.join(model_save_dir, exp_name + '_model_' + str(int(time.time())))
+                save_path = os.path.join(model_save_dir, 'best_model.pt')
+                torch.save(model.state_dict(), save_path)
+
+                print('Validation accuracy increased to %f, saving model to %s' %(val_acc, save_path))
+
 
 
 if __name__ == '__main__':
@@ -76,7 +132,7 @@ if __name__ == '__main__':
         'adam': torch.optim.Adam, 
         'rmsprop': torch.optim.RMSprop}
     
-    models_dict = {'resnet50': Resnet50}
+    models_dict = {'Resnet50': Resnet50}
 
     parser = argparse.ArgumentParser(description='Alzheimer\'s Disease Classification')
     parser.add_argument('--data_dir', '-D',
@@ -120,8 +176,12 @@ if __name__ == '__main__':
     #                     help='Data augmentations')
     parser.add_argument('--model_path', '-p',
                         type=str, 
-                        default=None, 
+                        default='./saved_models/best_model.pt', 
                         help='Save model string')
+    parser.add_argument('--load_model', '-ld',
+                        type=bool, 
+                        default=False, 
+                        help='Load a saved model')
     parser.add_argument('--splits', '-s',
                         nargs='+', 
                         type=float, 
@@ -157,6 +217,7 @@ if __name__ == '__main__':
         model_optimizer=opti_dict[args.optimizer],
         # data_augmentations=eval(args.data_augmentations),
         save_model_str=args.model_path,
+        load_model=args.load_model,
         splits=args.splits,
         use_all_data_to_train=args.use_all_data_to_train,
         exp_name=args.exp_name
