@@ -7,6 +7,7 @@ from torchsummary import summary
 import logging
 import argparse
 import os
+from pathlib import Path
 
 from src.data import Dataset_Setup, AlzDataset
 from src.models.resnet50 import Resnet50
@@ -64,9 +65,11 @@ def main(
     print(f"Image shape: ({channels} x {img_height} x {img_width})")
 
     # Model setup
+    model_save_dir = Path(os.getcwd()) / save_model_str
+    save_path = model_save_dir / 'best_model.pt'
     model = torch_model()
     if load_model:
-        model.load_state_dict(torch.load(save_model_str))
+        model.load_state_dict(torch.load(save_path))
     model.to(device)
 
     # Print model summary
@@ -78,8 +81,7 @@ def main(
     # LR scheduler
     scheduler = lr_scheduler.StepLR(optimizer, step_size=15, gamma=0.33)
 
-    # Train model
-
+    # Training model
     logging.info("Training model...")
     best_val_acc = 0
 
@@ -98,6 +100,7 @@ def main(
         logging.info('Training loss: %f', train_loss)
         scheduler.step()
 
+        #Validation
         val_acc, val_loss = eval_fn(
             model, 
             train_criterion, 
@@ -108,18 +111,11 @@ def main(
 
         if val_acc > best_val_acc:
             best_val_acc = val_acc
-            if save_model_str:
-            # Save the model checkpoint can be restored via "model = torch.load(save_model_str)"
-                model_save_dir = os.path.join(os.getcwd(), save_model_str)
+            if not os.path.exists(model_save_dir):
+                os.mkdir(model_save_dir)
+            torch.save(model.state_dict(), save_path)
 
-                if not os.path.exists(model_save_dir):
-                    os.mkdir(model_save_dir)
-
-                # save_model_str = os.path.join(model_save_dir, exp_name + '_model_' + str(int(time.time())))
-                save_path = os.path.join(model_save_dir, 'best_model.pt')
-                torch.save(model.state_dict(), save_path)
-
-                print('Validation accuracy increased to %f, saving model to %s' %(val_acc, save_path))
+            print('Validation accuracy increased to %f, saving model to %s' %(val_acc, save_path))
 
 
 
@@ -154,7 +150,7 @@ if __name__ == '__main__':
                         help='Number of epochs')
     parser.add_argument('--batch_size', '-b',
                         type=int, 
-                        default=50, 
+                        default=64, 
                         help='Batch size')
     parser.add_argument('--learning_rate', '-l',
                         type=float, 
@@ -176,7 +172,7 @@ if __name__ == '__main__':
     #                     help='Data augmentations')
     parser.add_argument('--model_path', '-p',
                         type=str, 
-                        default='./saved_models/best_model.pt', 
+                        default='saved_models', 
                         help='Save model string')
     parser.add_argument('--load_model', '-ld',
                         type=bool, 

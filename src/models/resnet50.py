@@ -4,7 +4,7 @@ import torch.nn as nn
 import torchvision.models as models
 
 class Resnet50(nn.Module):
-    def __init__(self, num_classes=2):
+    def __init__(self, num_classes=1):
         super(Resnet50, self).__init__()
         self.PreTrained = models.resnet50(weights = models.ResNet50_Weights.IMAGENET1K_V2)
         for param in self.PreTrained.parameters():

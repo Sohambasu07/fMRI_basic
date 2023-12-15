@@ -14,6 +14,7 @@ def eval_fn(model, criterion, loader, device):
     :return: accuracy on the data
     """
     score = AverageMeter()
+    losses = AverageMeter()
     model.eval()
 
     t = tqdm(loader)
@@ -21,13 +22,13 @@ def eval_fn(model, criterion, loader, device):
         for images, labels in t:
             images = images.to(device)
             labels = labels.to(device)
-
-            outputs = model(images)
+            outputs = model(images).squeeze()
             loss = criterion(outputs, labels)
             acc = accuracy(outputs, labels)
-            score.update(acc.item(), images.size(0))
+            n = images.size(0)
+            losses.update(loss.item(), n)
+            score.update(acc.item(), n)
 
-            t.set_description('(=> Test) Accuracy: {:.4f}'.format(score.avg))
-            t.set_description('(=> Test) Loss: {:.4f}'.format(loss))
+            t.set_description('(=> Eval) Accuracy: {:.4f}, Loss: {:.4f}'.format(score.avg, losses.avg))
 
-    return score.avg, loss
+    return score.avg, losses.avg

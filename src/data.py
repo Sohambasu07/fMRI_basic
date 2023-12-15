@@ -1,6 +1,7 @@
 """ Script to download and preprocess the dataset """
 
 import os
+from pathlib import Path
 import zipfile
 from PIL import Image
 import numpy as np
@@ -8,15 +9,16 @@ import torch
 from torch.utils.data import Dataset, random_split
 
 class Dataset_Setup:
-    def __init__(self, data_dir, url, root_dir = './'):
-        self.data_dir = data_dir
-        self.url = url
+    def __init__(self, data_dir, url, root_dir = Path(os.getcwd())):
         self.root_dir = root_dir
+        self.data_dir = root_dir / data_dir
+        self.url = url
+
         self.download()
         self.extract()
 
     def download(self):
-        if os.path.exists(os.path.join(self.root_dir, 'dataset.zip')):
+        if os.path.exists(self.root_dir / "dataset.zip"):
             print("Dataset already downloaded!")
             return
         
@@ -25,12 +27,13 @@ class Dataset_Setup:
         print("Download complete.")
     
     def extract(self):
-        if len(os.listdir(self.data_dir)) > 0:
+        if (os.path.exists(self.data_dir) and
+            len(os.listdir(self.data_dir)) > 0):
             print("Already extracted!")
             return
         print("Extracting dataset...")
         os.makedirs(self.data_dir, exist_ok=True)
-        with zipfile.ZipFile(os.path.join(self.root_dir, "dataset.zip"), "r") as zip_ref:
+        with zipfile.ZipFile(self.root_dir / "dataset.zip", "r") as zip_ref:
             zip_ref.extractall(self.data_dir)
         print("Extraction complete.")
 
@@ -42,19 +45,20 @@ class AlzDataset(Dataset):
             data_dir, 
             split = {'train': True, 'val': True, 'test': True}, 
             split_ratio = {'train': 0.8, 'val': 0.1, 'test': 0.1}, 
-            transform=None
+            transform=None,
+            root_dir = Path(os.getcwd())
             ):
-        self.data_dir = data_dir
+        self.data_dir = root_dir / data_dir
         self.transform = transform
         self.split = split
         self.split_ratio = split_ratio
 
         self.paths = []
         for class_folder in os.listdir(self.data_dir):
-            class_dir = os.path.join(self.data_dir, class_folder)
+            class_dir = self.data_dir / class_folder
             if os.path.isdir(class_dir):
                 for img in os.listdir(class_dir):
-                    sample_path = os.path.join(class_dir, img)
+                    sample_path = class_dir / img
                     self.paths.append(sample_path)
 
     def __len__(self):
