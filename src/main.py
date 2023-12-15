@@ -11,7 +11,7 @@ import os
 from src.data import Dataset_Setup, AlzDataset
 from src.models.resnet50 import Resnet50
 from src.train import train_fn
-from src.eval import eval_fn
+from src.evaluate import eval_fn
 from src.utils import disp_image
 
 def main(
