@@ -1,6 +1,7 @@
 """ Write additional utilities here """
 
 import torch
+import matplotlib.pyplot as plt
 
 class AverageMeter(object):
 
@@ -21,3 +22,9 @@ class AverageMeter(object):
 def accuracy(logits, labels):
     preds = torch.argmax(logits, dim=1)
     return torch.sum(preds == labels) / len(labels)
+
+def disp_image(img, label):
+    plt.figure()
+    plt.imshow(img.permute(1, 2, 0))
+    plt.title(f"Label: {label}")
+    plt.show()

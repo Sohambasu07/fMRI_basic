@@ -9,6 +9,7 @@ import argparse
 from src.data import Dataset_Setup, AlzDataset
 from src.models.resnet50 import Resnet50
 from src.train import train_fn
+from src.utils import disp_image
 
 def main(
         data_dir,
@@ -21,6 +22,7 @@ def main(
         model_optimizer=torch.optim.Adam,
         data_augmentations=None,
         save_model_str=None,
+        splits = [0.8, 0.1, 0.1],
         use_all_data_to_train=False,
         exp_name=''):
     
@@ -46,6 +48,11 @@ def main(
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+
+    print(f"Train size: {len(train_dataset)}")
+    print(f"Image shape: {train_dataset[0][0].shape}")
+
+    disp_image(train_dataset[0][0], train_dataset[0][1])
 
 
 if __name__ == '__main__':
@@ -103,6 +110,11 @@ if __name__ == '__main__':
                         type=str, 
                         default=None, 
                         help='Save model string')
+    parser.add_argument('--splits', '-s',
+                        nargs='+', 
+                        type=float, 
+                        default=[0.8, 0.1, 0.1], 
+                        help='Train, Val, Test splits')
     parser.add_argument('--use_all_data_to_train', '-a',
                         type=bool, 
                         default=False, 
@@ -125,14 +137,15 @@ if __name__ == '__main__':
     main(
         data_dir=args.data_dir,
         url=args.url,
-        torch_model=eval(args.model),
+        torch_model=models_dict[args.model],
         num_epochs=args.num_epochs,
         batch_size=args.batch_size,
         learning_rate=args.learning_rate,
-        train_criterion=args.training_loss,
-        model_optimizer=args.optimizer,
+        train_criterion=loss_dict[args.training_loss],
+        model_optimizer=opti_dict[args.optimizer],
         data_augmentations=eval(args.data_augmentations),
         save_model_str=args.model_path,
+        splits=args.splits,
         use_all_data_to_train=args.use_all_data_to_train,
         exp_name=args.exp_name
     )
