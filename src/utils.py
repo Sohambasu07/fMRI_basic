@@ -2,6 +2,7 @@
 
 import torch
 import matplotlib.pyplot as plt
+import numpy as np
 
 class AverageMeter(object):
 
@@ -25,6 +26,6 @@ def accuracy(logits, labels):
 
 def disp_image(img, label):
     plt.figure()
-    plt.imshow(img.permute(1, 2, 0))
     plt.title(f"Label: {label}")
+    plt.imshow(np.asarray(img))
     plt.show()

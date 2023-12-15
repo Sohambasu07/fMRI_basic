@@ -3,6 +3,7 @@
 import os
 import zipfile
 from PIL import Image
+import numpy as np
 from torch.utils.data import Dataset, random_split
 
 class Dataset_Setup:
@@ -34,28 +35,35 @@ class Dataset_Setup:
 class AlzDataset(Dataset):
     def __init__(
             self, 
-            root_dir, 
+            data_dir, 
             split = {'train': True, 'val': True, 'test': True}, 
             split_ratio = {'train': 0.8, 'val': 0.1, 'test': 0.1}, 
             transform=None
             ):
-        self.root_dir = root_dir
+        self.data_dir = data_dir
         self.transform = transform
-        self.file_list = os.listdir(self.root_dir)
         self.split = split
         self.split_ratio = split_ratio
 
+        self.paths = []
+        for class_folder in os.listdir(self.data_dir):
+            class_dir = os.path.join(self.data_dir, class_folder)
+            if os.path.isdir(class_dir):
+                for img in os.listdir(class_dir):
+                    sample_path = os.path.join(class_dir, img)
+                    self.paths.append(sample_path)
+
     def __len__(self):
-        return len(self.file_list)
+        return len(self.paths)
 
     def __getitem__(self, idx):
-        img_name = os.path.join(self.root_dir, self.file_list[idx])
+        img_name = self.paths[idx]
         image = Image.open(img_name)
         image = image.resize((64, 64), Image.ANTIALIAS)
-
+        image = np.asarray(image)
         if self.transform:
             image = self.transform(image)
-        label = 1 if "AD_Data" in self.root_dir else 0
+        label = 1 if "AD_Data" in self.paths else 0
 
         return image, label
     
