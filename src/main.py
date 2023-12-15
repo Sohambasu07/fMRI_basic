@@ -1,10 +1,11 @@
 """ Main script to combine functionalities like dataloading, model building, training, and evaluation. """
 
 import torch
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, ConcatDataset
 from torchsummary import summary
 import logging
 import argparse
+import os
 
 from src.data import Dataset_Setup, AlzDataset
 from src.models.resnet50 import Resnet50
@@ -36,11 +37,22 @@ def main(
     Dataset_Setup(data_dir, url)
 
     # Create datasets
-    dataset = AlzDataset(
-        data_dir, 
+    ad_datapath = os.path.join(data_dir, "AD_Data")
+    cn_datapath = os.path.join(data_dir, "CN_Data")
+
+    dataset_ad = AlzDataset(
+        ad_datapath, 
         split={'train': True, 'val': True, 'test': True},
         split_ratio={'train': 0.8, 'val': 0.1, 'test': 0.1},
         transform=data_augmentations)
+    
+    dataset_cn = AlzDataset(
+        cn_datapath, 
+        split={'train': True, 'val': True, 'test': True},
+        split_ratio={'train': 0.8, 'val': 0.1, 'test': 0.1},
+        transform=data_augmentations)
+    
+    dataset = ConcatDataset([dataset_ad, dataset_cn])
 
     train_dataset, val_dataset, test_dataset = dataset.split_dataset()
 
@@ -102,10 +114,10 @@ if __name__ == '__main__':
                         default='adam',
                         choices=list(opti_dict.keys()),
                         help='Model optimizer')
-    parser.add_argument('--data_augmentations', '-d',
-                        type=str, 
-                        default=None, 
-                        help='Data augmentations')
+    # parser.add_argument('--data_augmentations', '-d',
+    #                     type=str, 
+    #                     default=None, 
+    #                     help='Data augmentations')
     parser.add_argument('--model_path', '-p',
                         type=str, 
                         default=None, 
@@ -143,7 +155,7 @@ if __name__ == '__main__':
         learning_rate=args.learning_rate,
         train_criterion=loss_dict[args.training_loss],
         model_optimizer=opti_dict[args.optimizer],
-        data_augmentations=eval(args.data_augmentations),
+        # data_augmentations=eval(args.data_augmentations),
         save_model_str=args.model_path,
         splits=args.splits,
         use_all_data_to_train=args.use_all_data_to_train,

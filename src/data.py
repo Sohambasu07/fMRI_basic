@@ -6,25 +6,26 @@ from PIL import Image
 from torch.utils.data import Dataset, random_split
 
 class Dataset_Setup:
-    def __init__(self, data_dir, url):
+    def __init__(self, data_dir, url, root_dir = './'):
         self.data_dir = data_dir
         self.url = url
+        self.root_dir = root_dir
         self.download()
         self.extract()
 
     def download(self):
-        if os.path.exists(self.data_dir):
+        if os.path.exists(os.path.join(self.root_dir, 'dataset.zip')):
             print("Dataset already downloaded")
             return
         
-        os.makedirs(self.data_dir, exist_ok=True)
         print("Downloading dataset...")
-        os.system(f"wget {self.url} -P {self.data_dir}")
+        os.system(f"wget {self.url} -O {self.root_dir}/dataset.zip -P {self.data_dir}")
         print("Download complete.")
     
     def extract(self):
         print("Extracting dataset...")
-        with zipfile.ZipFile(os.path.join(self.data_dir, "dataset.zip"), "r") as zip_ref:
+        os.makedirs(self.data_dir, exist_ok=True)
+        with zipfile.ZipFile(os.path.join(self.root_dir, "dataset.zip"), "r") as zip_ref:
             zip_ref.extractall(self.data_dir)
         print("Extraction complete.")
 
