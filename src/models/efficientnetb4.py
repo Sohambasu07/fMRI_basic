@@ -1,16 +1,16 @@
-""" Transfer Learning using ResNet50 """
+""" Transfer Learning using EfficientNet B4 """
 
 import torch.nn as nn
 import torchvision.models as models
 
-class Resnet50(nn.Module):
+class EfficientNetB4(nn.Module):
     def __init__(self, num_classes=1):
-        super(Resnet50, self).__init__()
-        self.PreTrained = models.resnet50(weights = models.ResNet50_Weights.IMAGENET1K_V2)
+        super(EfficientNetB4, self).__init__()
+        self.PreTrained = models.efficientnet_b4(weights = models.EfficientNet_B4_Weights.IMAGENET1K_V1)
         for param in self.PreTrained.parameters():
             param.requires_grad = False
         
-        self.PreTrained.fc = nn.Linear(2048, num_classes)
+        self.PreTrained.classifier = nn.Linear(960, num_classes)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):

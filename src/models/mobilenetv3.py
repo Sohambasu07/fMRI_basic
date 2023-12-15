@@ -1,16 +1,16 @@
-""" Transfer Learning using ResNet50 """
+""" Transfer Learning using MobileNetv3 """
 
 import torch.nn as nn
 import torchvision.models as models
 
-class Resnet50(nn.Module):
+class MobileNetv3(nn.Module):
     def __init__(self, num_classes=1):
-        super(Resnet50, self).__init__()
-        self.PreTrained = models.resnet50(weights = models.ResNet50_Weights.IMAGENET1K_V2)
+        super(MobileNetv3, self).__init__()
+        self.PreTrained = models.mobilenet_v3_large(weights = models.MobileNet_V3_Large_Weights.IMAGENET1K_V2)
         for param in self.PreTrained.parameters():
             param.requires_grad = False
         
-        self.PreTrained.fc = nn.Linear(2048, num_classes)
+        self.PreTrained.classifier = nn.Linear(960, num_classes)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):

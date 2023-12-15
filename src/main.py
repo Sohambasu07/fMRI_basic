@@ -1,7 +1,7 @@
 """ Main script to combine functionalities like dataloading, model building, training, and evaluation. """
 
 import torch
-from torch.utils.data import DataLoader, ConcatDataset
+from torch.utils.data import DataLoader
 from torch.optim import lr_scheduler
 from torchsummary import summary
 import logging
@@ -11,9 +11,10 @@ from pathlib import Path
 
 from src.data import Dataset_Setup, AlzDataset
 from src.models.resnet50 import Resnet50
+from src.models.mobilenetv3 import MobileNetv3
+from src.models.efficientnetb4 import EfficientNetB4
 from src.train import train_fn
 from src.evaluate import eval_fn
-from src.utils import disp_image
 
 def main(
         data_dir,
@@ -126,9 +127,14 @@ if __name__ == '__main__':
     opti_dict = {
         'sgd': torch.optim.SGD, 
         'adam': torch.optim.Adam, 
-        'rmsprop': torch.optim.RMSprop}
+        'rmsprop': torch.optim.RMSprop
+        }
     
-    models_dict = {'Resnet50': Resnet50}
+    models_dict = {
+        'Resnet50': Resnet50,
+        'MobileNetV3': MobileNetv3,
+        'EfficientNetB4': EfficientNetB4
+        }
 
     parser = argparse.ArgumentParser(description='Alzheimer\'s Disease Classification')
     parser.add_argument('--data_dir', '-D',
