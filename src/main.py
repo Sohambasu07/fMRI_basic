@@ -8,6 +8,7 @@ import logging
 import argparse
 import os
 from pathlib import Path
+import wandb
 
 from src.data import Dataset_Setup, AlzDataset
 from src.models.resnet50 import Resnet50
@@ -21,7 +22,7 @@ def main(
         url,
         torch_model,
         num_epochs=10,
-        batch_size=50,
+        batch_size=64,
         learning_rate=0.001,
         train_criterion=torch.nn.CrossEntropyLoss,
         model_optimizer=torch.optim.Adam,
@@ -82,41 +83,70 @@ def main(
     # LR scheduler
     scheduler = lr_scheduler.StepLR(optimizer, step_size=15, gamma=0.33)
 
-    # Training model
-    logging.info("Training model...")
-    best_val_acc = 0
+    # Wandb setup
+    wandb.login()
 
-    for epoch in range(num_epochs):
+    with wandb.init(
+        # set the wandb project where this run will be logged
+        project="3dqd-pvqvae",
+            
+        # track hyperparameters and run metadata
+        config={
+        "learning_rate": learning_rate,
+        "architecture": "PVQVAE",
+        "dataset": "ShapeNetv2",
+        "optimizer": optimizer.__class__.__name__,
+        "train_criterion": train_criterion.__class__.__name__,
+        "epochs": num_epochs,
+        "batch_size": train_loader.batch_size,
+        "lr_schedule": scheduler.__class__.__name__,
+        }
+    ) as run:
 
-        logging.info('#' * 50)
-        logging.info('Epoch [{}/{}]'.format(epoch + 1, num_epochs))
+        # Training model
+        logging.info("Training model...")
+        best_val_loss = 0
 
-        train_acc, train_loss = train_fn(
-            model, 
-            optimizer, 
-            train_criterion, 
-            train_loader, 
-            device)
-        logging.info('Training accuracy: %f', train_acc)
-        logging.info('Training loss: %f', train_loss)
-        scheduler.step()
+        for epoch in range(num_epochs):
 
-        #Validation
-        val_acc, val_loss = eval_fn(
-            model, 
-            train_criterion, 
-            val_loader, 
-            device)
-        logging.info('Validation accuracy: %f', val_acc)
-        logging.info('Validation loss: %f', val_loss)
+            logging.info('#' * 50)
+            logging.info('Epoch [{}/{}]'.format(epoch + 1, num_epochs))
 
-        if val_acc > best_val_acc:
-            best_val_acc = val_acc
-            if not os.path.exists(model_save_dir):
-                os.mkdir(model_save_dir)
-            torch.save(model.state_dict(), save_path)
+            train_acc, train_loss = train_fn(
+                model, 
+                optimizer, 
+                train_criterion, 
+                train_loader, 
+                device)
+            logging.info('Training accuracy: %f', train_acc)
+            logging.info('Training loss: %f', train_loss)
+            wandb.log({"train_acc": train_acc, "train_loss": train_loss})
+            scheduler.step()
 
-            print('Validation accuracy increased to %f, saving model to %s' %(val_acc, save_path))
+            #Validation
+            val_acc, val_loss = eval_fn(
+                model, 
+                train_criterion, 
+                val_loader, 
+                device)
+            logging.info('Validation accuracy: %f', val_acc)
+            logging.info('Validation loss: %f', val_loss)
+            wandb.log({"val_acc": val_acc, "val_loss": val_loss})
+
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                if not os.path.exists(model_save_dir):
+                    os.mkdir(model_save_dir)
+                torch.save(model.state_dict(), save_path)
+                best_model = wandb.Artifact(f"best_model_{run.id}", type="model")
+                best_model.add_file('./best_model.pt')
+                run.log_artifact(best_model)
+                logging.info("Best Model saved")
+                logging.info(val_loss)
+                logging.info(best_val_loss)
+
+                print('Validation Loss decreased to %f, saving model to %s' %(best_val_loss, save_path))
+        run.finish()
 
 
 
