@@ -28,3 +28,11 @@ def disp_image(img, label):
     plt.title(f"Label: {label}")
     plt.imshow(np.asarray(img))
     plt.show()
+
+def plot_metrics(metric, name):
+    plt.figure()
+    plt.title(f"{name} vs Epoch")
+    plt.plot(metric)
+    plt.xlabel("Epoch")
+    plt.ylabel(name)
+    plt.show()
