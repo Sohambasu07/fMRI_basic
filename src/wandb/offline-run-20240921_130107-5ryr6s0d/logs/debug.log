@@ -1,0 +1,31 @@
+2024-09-21 13:01:07,153 INFO    MainThread:22317 [wandb_setup.py:_flush():77] Current SDK version is 0.18.1
+2024-09-21 13:01:07,154 INFO    MainThread:22317 [wandb_setup.py:_flush():77] Configure stats pid to 22317
+2024-09-21 13:01:07,154 INFO    MainThread:22317 [wandb_setup.py:_flush():77] Loading settings from /root/.config/wandb/settings
+2024-09-21 13:01:07,154 INFO    MainThread:22317 [wandb_setup.py:_flush():77] Loading settings from /content/fMRI_basic/src/wandb/settings
+2024-09-21 13:01:07,154 INFO    MainThread:22317 [wandb_setup.py:_flush():77] Loading settings from environment variables: {}
+2024-09-21 13:01:07,154 INFO    MainThread:22317 [wandb_setup.py:_flush():77] Inferring run settings from compute environment: {'program_relpath': 'src/main.py', 'program_abspath': '/content/fMRI_basic/src/main.py', 'program': '/content/fMRI_basic/src/main.py'}
+2024-09-21 13:01:07,154 INFO    MainThread:22317 [wandb_setup.py:_flush():77] Applying login settings: {}
+2024-09-21 13:01:07,154 INFO    MainThread:22317 [wandb_setup.py:_flush():77] Applying login settings: {'mode': 'offline'}
+2024-09-21 13:01:07,154 INFO    MainThread:22317 [wandb_init.py:_log_setup():532] Logging user logs to /content/fMRI_basic/src/wandb/offline-run-20240921_130107-5ryr6s0d/logs/debug.log
+2024-09-21 13:01:07,154 INFO    MainThread:22317 [wandb_init.py:_log_setup():533] Logging internal logs to /content/fMRI_basic/src/wandb/offline-run-20240921_130107-5ryr6s0d/logs/debug-internal.log
+2024-09-21 13:01:07,154 INFO    MainThread:22317 [wandb_init.py:init():616] calling init triggers
+2024-09-21 13:01:07,154 INFO    MainThread:22317 [wandb_init.py:init():623] wandb.init called with sweep_config: {}
+config: {'learning_rate': 0.0001, 'architecture': 'PVQVAE', 'dataset': 'ShapeNetv2', 'optimizer': 'Adam', 'train_criterion': 'BCELoss', 'epochs': 50, 'batch_size': 32, 'lr_schedule': 'StepLR'}
+2024-09-21 13:01:07,154 INFO    MainThread:22317 [wandb_init.py:init():666] starting backend
+2024-09-21 13:01:07,154 INFO    MainThread:22317 [wandb_init.py:init():670] setting up manager
+2024-09-21 13:01:07,156 INFO    MainThread:22317 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-09-21 13:01:07,157 INFO    MainThread:22317 [wandb_init.py:init():678] backend started and connected
+2024-09-21 13:01:07,160 INFO    MainThread:22317 [wandb_init.py:init():773] updated telemetry
+2024-09-21 13:01:07,166 INFO    MainThread:22317 [wandb_init.py:init():806] communicating run to backend with 90.0 second timeout
+2024-09-21 13:01:07,173 INFO    MainThread:22317 [wandb_init.py:init():857] starting run threads in backend
+2024-09-21 13:01:07,571 INFO    MainThread:22317 [wandb_run.py:_console_start():2459] atexit reg
+2024-09-21 13:01:07,571 INFO    MainThread:22317 [wandb_run.py:_redirect():2307] redirect: wrap_raw
+2024-09-21 13:01:07,572 INFO    MainThread:22317 [wandb_run.py:_redirect():2372] Wrapping output streams.
+2024-09-21 13:01:07,572 INFO    MainThread:22317 [wandb_run.py:_redirect():2397] Redirects installed.
+2024-09-21 13:01:07,573 INFO    MainThread:22317 [wandb_init.py:init():900] run started, returning control to user process
+2024-09-21 13:02:50,316 INFO    MainThread:22317 [wandb_run.py:_finish():2158] finishing run 3dqd-pvqvae/5ryr6s0d
+2024-09-21 13:02:50,316 INFO    MainThread:22317 [wandb_run.py:_atexit_cleanup():2422] got exitcode: 1
+2024-09-21 13:02:50,316 INFO    MainThread:22317 [wandb_run.py:_restore():2404] restore
+2024-09-21 13:02:50,316 INFO    MainThread:22317 [wandb_run.py:_restore():2410] restore done
+2024-09-21 13:02:51,321 INFO    MainThread:22317 [wandb_run.py:_footer_history_summary_info():4037] rendering history
+2024-09-21 13:02:51,321 INFO    MainThread:22317 [wandb_run.py:_footer_history_summary_info():4069] rendering summary

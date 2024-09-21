@@ -1,0 +1,31 @@
+2024-09-21 12:48:01,257 INFO    MainThread:18681 [wandb_setup.py:_flush():77] Current SDK version is 0.18.1
+2024-09-21 12:48:01,257 INFO    MainThread:18681 [wandb_setup.py:_flush():77] Configure stats pid to 18681
+2024-09-21 12:48:01,257 INFO    MainThread:18681 [wandb_setup.py:_flush():77] Loading settings from /root/.config/wandb/settings
+2024-09-21 12:48:01,257 INFO    MainThread:18681 [wandb_setup.py:_flush():77] Loading settings from /content/fMRI_basic/src/wandb/settings
+2024-09-21 12:48:01,257 INFO    MainThread:18681 [wandb_setup.py:_flush():77] Loading settings from environment variables: {}
+2024-09-21 12:48:01,257 INFO    MainThread:18681 [wandb_setup.py:_flush():77] Inferring run settings from compute environment: {'program_relpath': 'src/main.py', 'program_abspath': '/content/fMRI_basic/src/main.py', 'program': '/content/fMRI_basic/src/main.py'}
+2024-09-21 12:48:01,257 INFO    MainThread:18681 [wandb_setup.py:_flush():77] Applying login settings: {}
+2024-09-21 12:48:01,257 INFO    MainThread:18681 [wandb_setup.py:_flush():77] Applying login settings: {'mode': 'offline'}
+2024-09-21 12:48:01,257 INFO    MainThread:18681 [wandb_init.py:_log_setup():532] Logging user logs to /content/fMRI_basic/src/wandb/offline-run-20240921_124801-zolkfa4n/logs/debug.log
+2024-09-21 12:48:01,257 INFO    MainThread:18681 [wandb_init.py:_log_setup():533] Logging internal logs to /content/fMRI_basic/src/wandb/offline-run-20240921_124801-zolkfa4n/logs/debug-internal.log
+2024-09-21 12:48:01,258 INFO    MainThread:18681 [wandb_init.py:init():616] calling init triggers
+2024-09-21 12:48:01,258 INFO    MainThread:18681 [wandb_init.py:init():623] wandb.init called with sweep_config: {}
+config: {'learning_rate': 0.0001, 'architecture': 'PVQVAE', 'dataset': 'ShapeNetv2', 'optimizer': 'Adam', 'train_criterion': 'BCELoss', 'epochs': 50, 'batch_size': 32, 'lr_schedule': 'StepLR'}
+2024-09-21 12:48:01,258 INFO    MainThread:18681 [wandb_init.py:init():666] starting backend
+2024-09-21 12:48:01,258 INFO    MainThread:18681 [wandb_init.py:init():670] setting up manager
+2024-09-21 12:48:01,261 INFO    MainThread:18681 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-09-21 12:48:01,262 INFO    MainThread:18681 [wandb_init.py:init():678] backend started and connected
+2024-09-21 12:48:01,266 INFO    MainThread:18681 [wandb_init.py:init():773] updated telemetry
+2024-09-21 12:48:01,272 INFO    MainThread:18681 [wandb_init.py:init():806] communicating run to backend with 90.0 second timeout
+2024-09-21 12:48:01,282 INFO    MainThread:18681 [wandb_init.py:init():857] starting run threads in backend
+2024-09-21 12:48:01,691 INFO    MainThread:18681 [wandb_run.py:_console_start():2459] atexit reg
+2024-09-21 12:48:01,691 INFO    MainThread:18681 [wandb_run.py:_redirect():2307] redirect: wrap_raw
+2024-09-21 12:48:01,691 INFO    MainThread:18681 [wandb_run.py:_redirect():2372] Wrapping output streams.
+2024-09-21 12:48:01,691 INFO    MainThread:18681 [wandb_run.py:_redirect():2397] Redirects installed.
+2024-09-21 12:48:01,693 INFO    MainThread:18681 [wandb_init.py:init():900] run started, returning control to user process
+2024-09-21 12:52:44,155 INFO    MainThread:18681 [wandb_run.py:_finish():2158] finishing run 3dqd-pvqvae/zolkfa4n
+2024-09-21 12:52:44,156 INFO    MainThread:18681 [wandb_run.py:_atexit_cleanup():2422] got exitcode: 0
+2024-09-21 12:52:44,156 INFO    MainThread:18681 [wandb_run.py:_restore():2404] restore
+2024-09-21 12:52:44,156 INFO    MainThread:18681 [wandb_run.py:_restore():2410] restore done
+2024-09-21 12:52:45,160 INFO    MainThread:18681 [wandb_run.py:_footer_history_summary_info():4037] rendering history
+2024-09-21 12:52:45,161 INFO    MainThread:18681 [wandb_run.py:_footer_history_summary_info():4069] rendering summary

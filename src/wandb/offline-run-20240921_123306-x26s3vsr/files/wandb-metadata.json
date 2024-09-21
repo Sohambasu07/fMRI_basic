@@ -1,0 +1,56 @@
+{
+  "os": "Linux-6.1.85+-x86_64-with-glibc2.35",
+  "python": "3.10.12",
+  "startedAt": "2024-09-21T12:33:06.671044Z",
+  "args": [
+    "--data_dir",
+    "dataset",
+    "--url",
+    "/content/fMRI_basic/src/dataset.zip",
+    "--model",
+    "MobileNetV3",
+    "--num_epochs",
+    "10",
+    "--batch_size",
+    "32",
+    "--learning_rate",
+    "0.001"
+  ],
+  "program": "/content/fMRI_basic/src/main.py",
+  "codePath": "src/main.py",
+  "git": {
+    "remote": "https://github.com/Sohambasu07/fMRI_basic.git",
+    "commit": "8926bd570a6f485f92046dcaf6d096b2794505b6"
+  },
+  "root": "/content/fMRI_basic/src",
+  "host": "4bf1d631657c",
+  "username": "root",
+  "executable": "/usr/bin/python3",
+  "codePathLocal": "main.py",
+  "cpu_count": 1,
+  "cpu_count_logical": 2,
+  "gpu": "[Tesla T4]",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "120942624768",
+      "used": "35046412288"
+    }
+  },
+  "memory": {
+    "total": "13609431040"
+  },
+  "cpu": {
+    "count": 1,
+    "countLogical": 2
+  },
+  "gpu_nvidia": [
+    {
+      "name": "Tesla T4",
+      "memoryTotal": "16106127360",
+      "cudaCores": 2560,
+      "architecture": "Turing"
+    }
+  ],
+  "cudaVersion": "12.2"
+}

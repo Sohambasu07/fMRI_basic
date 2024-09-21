@@ -3,7 +3,7 @@
 from tqdm import tqdm
 import time
 
-from src.utils import AverageMeter, accuracy
+from utils import AverageMeter, accuracy
 
 
 def train_fn(model, optimizer, criterion, loader, device):

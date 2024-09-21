@@ -3,7 +3,7 @@
 import torch
 from tqdm import tqdm
 
-from src.utils import AverageMeter, accuracy
+from utils import AverageMeter, accuracy
 
 def eval_fn(model, criterion, loader, device):
     """
