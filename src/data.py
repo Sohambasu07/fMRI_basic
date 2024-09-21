@@ -56,10 +56,17 @@ class AlzDataset(Dataset):
         self.paths = []
         for class_folder in os.listdir(self.data_dir):
             class_dir = self.data_dir / class_folder
+            print(f"Checking class directory: {class_dir}")  
             if os.path.isdir(class_dir):
-                for img in os.listdir(class_dir):
-                    sample_path = class_dir / img
-                    self.paths.append(sample_path)
+                for patient_folder in os.listdir(class_dir):
+                    patient_dir = class_dir / patient_folder
+                    print(f"Checking patient directory: {patient_dir}") 
+                    if os.path.isdir(patient_dir):
+                        for root, _, files in os.walk(patient_dir):
+                            for img in files:
+                                img_path = Path(root) / img
+                                if img_path.is_file() and img.lower().endswith(('.png', '.jpg', '.jpeg')):
+                                    self.paths.append(img_path)
 
     def __len__(self):
         return len(self.paths)
@@ -67,7 +74,8 @@ class AlzDataset(Dataset):
     def __getitem__(self, idx):
         img_name = self.paths[idx]
         image = Image.open(img_name)
-        image = image.resize((64, 64), Image.ANTIALIAS)
+        #image = Image.open(img_name).convert('L')  
+        image = image.resize((64, 64), Image.LANCZOS) 
         image = torch.permute(torch.Tensor(np.asarray(image)), (2, 0, 1))
         if self.transform:
             image = self.transform(image)
