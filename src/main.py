@@ -10,12 +10,12 @@ import os
 from pathlib import Path
 import wandb
 
-from src.data import Dataset_Setup, AlzDataset
-from src.models.resnet50 import Resnet50
-from src.models.mobilenetv3 import MobileNetv3
-from src.models.efficientnetb4 import EfficientNetB4
-from src.train import train_fn
-from src.evaluate import eval_fn
+from data import Dataset_Setup, AlzDataset
+from models.resnet50 import Resnet50
+from models.mobilenetv3 import MobileNetv3
+from models.efficientnetb4 import EfficientNetB4
+from train import train_fn
+from evaluate import eval_fn
 
 def main(
         data_dir,
